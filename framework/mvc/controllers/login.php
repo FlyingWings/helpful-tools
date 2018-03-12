@@ -10,7 +10,8 @@ class LoginController extends IndexController{
         parent::__construct();
     }
     public function index(){
-        echo 'indexView';
+        $data = ['title'=>'123', 'content'=>'123', 'id'=>1];
+        $this->load("user/index", $data);
     }
 
     public function test(){

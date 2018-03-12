@@ -11,3 +11,5 @@ global $routers;
 $routers['default'] = 'IndexController/index';
 
 $routers['test'] = 'LoginController/test';
+
+$routers['index'] = 'LoginController/index';

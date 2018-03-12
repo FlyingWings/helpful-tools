@@ -47,6 +47,16 @@ $cmd = load_files(COMMANDS);
 
 
 function load_functions($argv = [], $cmd=[]){
+
+    $COMMAND_PROMPT= [
+        "balance"=>"余额相关函数，计算收入等",
+        "crawler"=>"爬虫函数，用于抓取/处理数据",
+        "general"=>"杂项",
+        "install"=>"初始化函数，用于安装框架相关的函数等",
+        "ssh"=>"构造SSH隧道，实现免密登陆等",
+        "text"=>"文字处理相关"
+    ];
+
     $func_list = array_map(function($i){return explode("_", $i);},get_cli_functions($cmd));
     $matches = [];
     $arguments = $argv;
@@ -93,7 +103,6 @@ function load_functions($argv = [], $cmd=[]){
         $func_list[0][0] = "cli";
         call_user_func(implode("_", $func_list[0]), $ar);
     }else if($find_flag == 1){
-        global $COMMAND_PROMPT;
         $func_type_list = [];
         foreach ($func_list as $f){
             $func_type_list[$f[0]][]= $f;

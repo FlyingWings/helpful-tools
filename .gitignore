@@ -4,3 +4,4 @@
 /vendor/*
 /docs/*
 /secret_config.php
+composer.phar

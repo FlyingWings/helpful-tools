@@ -7,10 +7,12 @@
  */
 
 //加载核心
-require_once("base.php");
-global $argv;//预存储可能给定的argv(命令行模式)
+require_once("../base.php");
+
 function load_mvc_router(){
     global $routers;
+
+    //加载指定控制器
     $controllers = str_replace("\\","",json_encode(load_files(ROOT. DIRECTORY_SEPARATOR. "mvc". DIRECTORY_SEPARATOR. "controllers")));//dd($controllers);
     preg_match_all("/controllers.+?php/", $controllers, $matches);
     foreach($matches[0] as $m){
@@ -30,19 +32,6 @@ function load_mvc_router(){
     }
 
 }
-
-
-load_mvc_router();
-//加载控制器
-load_files(MVC. DIRECTORY_SEPARATOR. "controllers");
-
-
-
-//路由转意，寻找符合条件的控制器类
-$tranlated_routers = array_map(function($i){
-    return explode("/", $i);
-}, $routers);
-
 
 function call_controller_method($uri, &$routers){
     switch (ROUTER_METHOD){
@@ -73,6 +62,20 @@ function call_controller_method($uri, &$routers){
     }
 }
 
+
+
+
+load_mvc_router();
+//加载控制器
+load_files(MVC. DIRECTORY_SEPARATOR. "controllers");
+load_files(FRAME. DIRECTORY_SEPARATOR. "hooks");
+
+
+//路由转意，寻找符合条件的控制器类
+$tranlated_routers = array_map(function($i){
+    return explode("/", $i);
+}, $routers);
+
 try{
     //检查default方法是否存在
     if(isset($tranlated_routers["default"]) && class_exists(ucfirst($tranlated_routers['default'][0]))){
@@ -92,7 +95,7 @@ try{
 
     //Pre Hook 加载（用于URI等过滤）
     load_hook_pre();
-    $uri = explode("/", substr($_SERVER['REQUEST_URI'], strlen("/index.php/"))); // /index.php/ ->Length: 11
+    $uri = explode("/", substr($_SERVER['REQUEST_URI'], strlen("/index.php/")));//dd($uri); // /index.php/ ->Length: 11
     if(empty($uri[0])){
         $uri = ['default'];
     }
@@ -100,6 +103,7 @@ try{
     //Before Controller Hook加载（用于修改参数，设置SESSION等）
     load_hook_before_controller();
 
+    //dd($uri);
     call_controller_method($uri, $tranlated_routers);
     //Done Hook, 扫尾工作
     load_hook_done();

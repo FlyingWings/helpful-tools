@@ -30,19 +30,10 @@ define("LIBRARY", ROOT. DIRECTORY_SEPARATOR. "library");//工具类函数，如U
 
 define("COMMANDS", ROOT. DIRECTORY_SEPARATOR. "commands");//实际使用的指令
 
-define("CONFIG", ROOT. DIRECTORY_SEPARATOR. "config");
+define("CONFIG", ROOT. DIRECTORY_SEPARATOR. "config");//核心配置
 
 
-require_once(ROOT. DIRECTORY_SEPARATOR. "vendor". DIRECTORY_SEPARATOR. "autoload.php");
-
-$COMMAND_PROMPT= [
-        "balance"=>"余额相关函数，计算收入等",
-        "crawler"=>"爬虫函数，用于抓取/处理数据",
-        "general"=>"杂项",
-        "install"=>"初始化函数，用于安装框架相关的函数等",
-        "ssh"=>"构造SSH隧道，实现免密登陆等",
-        "text"=>"文字处理相关"
-];
+require_once(ROOT. DIRECTORY_SEPARATOR. "vendor". DIRECTORY_SEPARATOR. "autoload.php");//Composer Autoloader
 
 load_files(AUTOLOAD);
 load_files(LIBRARY);
