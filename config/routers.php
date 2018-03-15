@@ -13,3 +13,5 @@ $routers['default'] = 'IndexController/index';
 $routers['test'] = 'LoginController/test';
 
 $routers['index'] = 'LoginController/index';
+
+$routers['column'] = 'ColumnController/view';
