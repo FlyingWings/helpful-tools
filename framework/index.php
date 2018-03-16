@@ -7,7 +7,7 @@
  */
 
 //加载核心
-require_once("../base.php");
+require_once(SITE_ROOT."/../../base.php");
 
 function load_mvc_router(){
     global $routers;

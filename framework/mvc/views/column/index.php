@@ -6,8 +6,8 @@
 <form action="/index.php/column" method="post">
 <table>
     <tr>
-        <td>左边列</td>
-        <td>右边列</td>
+        <td>左边列{{dup}}</td>
+        <td>右边列{{dup}}</td>
         <td>对比</td>
     </tr>
     <tr>
@@ -24,6 +24,12 @@
             <input type="button" value="重置" style="height: 100px;width: 100px" onclick="location.href='/index.php/column'"/>
         </td>
     </tr>
+
+    <tr style="display: {{hidden}}">
+        <td>左边列中不重合的</td>
+        <td>右边列中不重合的</td>
+        <td></td>
+    </tr>
     <tr style="display: {{hidden}}">
         <td>
             <textarea name="single_left" style="min-height: 600px; min-width: 300px">{{single_left}}</textarea>
@@ -32,6 +38,7 @@
         <td>
             <textarea name="single_right" style="min-height: 600px; min-width: 300px">{{single_right}}</textarea>
         </td>
+        <td></td>
     </tr>
 
 </table>

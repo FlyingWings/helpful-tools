@@ -13,12 +13,15 @@ class ColumnController extends IndexController{
 
     public function view(){
         $data = $this->input();
+        $result = ['left'=>"", 'right'=>"", "single_left"=>"", "single_right"=>"", "hidden"=>"none", "dup"=>""];
+
+
         if(!empty($data["POST"])){
             $left= $data["POST"]['left'];
             $right = $data["POST"]['right'];
 
             if(empty($left) || empty($right)){
-                $this->load("/column/index", ['left'=>"", 'right'=>"", "single_left"=>"", "single_right"=>"", "hidden"=>"none"]);
+                $this->load("/column/index", $result);
                 exit;
             }
             $left = array_map(function($i){return trim($i,"\"'\t\n\r\0");},explode("\n", $left));
@@ -35,8 +38,9 @@ class ColumnController extends IndexController{
                 }
             }
 
+//            dd($left_ids, $right_ids);
             foreach($left as $key=>$item){
-                if(in_array($key, $left_ids)){
+                if(in_array($key, array_keys($left_ids))){
                     $duplicated_left[]= $item;
                 }else{
                     $island_left[]=$item;
@@ -44,19 +48,19 @@ class ColumnController extends IndexController{
             }
 
             foreach($right as $key=>$item){
-                if(in_array($key, $right_ids)){
+                if(in_array($key, array_keys($right_ids))){
                     $duplicated_right[]= $item;
                 }else{
                     $island_right[]=$item;
                 }
             }
-            dd($left_ids, $right_ids, $island_left, $island_right);
+//            dd($left_ids, $right_ids, $island_left, $island_right);
             $duplicated_left = implode("\n", $duplicated_left);$duplicated_right = implode("\n", $duplicated_right);
             $island_left = implode("\n", $island_left);$island_right = implode("\n", $island_right);
-            $this->load("/column/index", ['left'=>$duplicated_left, 'right'=>$duplicated_right, "single_left"=>$island_left, "single_right"=>$island_right, "hidden"=>"block"]);
+            $this->load("/column/index", ['left'=>$duplicated_left, 'right'=>$duplicated_right, "single_left"=>$island_left, "single_right"=>$island_right, "hidden"=>"", "dup"=>"重合的"]);
 
         }else{
-            $this->load("/column/index", ['left'=>"", 'right'=>"", "single_left"=>"", "single_right"=>"", "hidden"=>"none"]);
+            $this->load("/column/index", $result);
         }
     }
 }
