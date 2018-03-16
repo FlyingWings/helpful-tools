@@ -54,7 +54,8 @@ function load_functions($argv = [], $cmd=[]){
         "general"=>"杂项",
         "install"=>"初始化函数，用于安装框架相关的函数等",
         "ssh"=>"构造SSH隧道，实现免密登陆等",
-        "text"=>"文字处理相关"
+        "text"=>"文字处理相关",
+        "practise"=>"测试用"
     ];
 
     $func_list = array_map(function($i){return explode("_", $i);},get_cli_functions($cmd));
