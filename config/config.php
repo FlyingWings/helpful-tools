@@ -8,7 +8,7 @@
 
 define("ROUTER_METHOD", "default");//default=>1, uri-pass-value=>2
 
-define("RUN_MODE", "DEV");//DEV, TEST, ONLINE
+define("RUN_MODE", "ONLINE");//DEV, TEST, ONLINE
 
 define("SSH_HOSTS_FILE", "/etc/ssh_hosts.json");
 

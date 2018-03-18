@@ -9,4 +9,9 @@
 
 define("SITE_ROOT", dirname(__FILE__));
 
+global $routers;
+
+$routers['column'] = 'ColumnController/view';
+
+
 require_once(SITE_ROOT."/../../framework/index.php");
