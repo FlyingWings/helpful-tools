@@ -98,6 +98,10 @@ function cli_build_ssh_direct(){
 
 }
 
+/**
+ * SSH端口绑定
+ * 地址|远程端口|远程用户名
+ */
 function cli_build_ssh_reverse(){
     $arguments = [
         "alexfu.cc",
@@ -178,13 +182,10 @@ function cli_build_ssh_reverse(){
     }
 
     $judge_flag = sprintf("%d:127.0.0.1:22", $arguments['port']);
-//    dd($map);
+
+
     $shell_status = array_filter(explode("\n", shell_exec(sprintf("ps -ef | grep ssh | grep '%s'", $judge_flag))));
 
-//    dd($map, $shell_status);
-
-
-//    dd($shell_status);
     if((isset($map[$arguments['port']]) && $map[$arguments['port']]['addr'] != gethostname()) || count($shell_status) >2 ){
         throw new Exception(sprintf("PORT %d IN USED FOR %s\n", $arguments['port'], implode(":",$map[$arguments['port']])));
     }else{
@@ -208,12 +209,79 @@ function cli_build_ssh_reverse(){
     }
 }
 
-function cli_manage_hosts_view(){
-    $content = file_get_contents("/etc/hosts");
-    $content = explode("\n", $content);
-    $content = array_filter($content);
-    $content = array_filter($content, function($i){return gettype(strpos($i, "#")) == "boolean";});
-//    $content = array_map(function($i){return ( trim($i, "\n"));}, $content);
-    dd($content);
 
+/**
+ * 搭建SSH转发(SOCKS5)
+ * 地址|本地端口
+ */
+function cli_build_ssh_transfer(){
+    $arguments = [
+        "2222",
+        "alexfu.cc",
+    ];
+
+    //获取命令行参数
+    $argu_new = func_get_args()[0];
+    foreach($arguments as $key=>$value){
+        if($key == count($argu_new)){
+            break;
+        }
+        $arguments[$key] = $argu_new[$key];
+    }
+
+    $name = [ "port", "addr"];
+
+    foreach($arguments as $key=>$value){
+        $arguments[$name[$key]] = $value;
+        unset($arguments[$key]);
+    }
+
+    $key_file = ROOT. "/data/ssh/id_rsa_".$arguments["addr"];
+    if(!file_exists($key_file)){
+        throw new Exception(sprintf("Key File not exists, please run command 'php cli.php build ssh direct %s", implode(" ",$arguments)));
+    }
+
+    try{
+        printf("PORT TRANSFERRING FOR %s:%s\n", $arguments['addr'], $arguments['port']);
+        exec(sprintf("ssh -i %s -N -f -D %d %s", $key_file, $arguments['port'], $arguments['addr']));
+    }catch (Exception $e){
+        printf("%s\n", $e->getMessage());
+    }
+}
+
+
+/**
+ * 删除端口转发
+ * 本地端口|域名
+ */
+function cli_ssh_delete_transfer(){
+    $arguments = [
+        "2222",
+        "alexfu.cc",
+    ];
+
+    //获取命令行参数
+    $argu_new = func_get_args()[0];
+    foreach($arguments as $key=>$value){
+        if($key == count($argu_new)){
+            break;
+        }
+        $arguments[$key] = $argu_new[$key];
+    }
+
+    $name = [ "port", "addr"];
+
+    foreach($arguments as $key=>$value){
+        $arguments[$name[$key]] = $value;
+        unset($arguments[$key]);
+    }
+
+    exec(sprintf("ps -ef | grep '\-N \-f \-D %s' | awk '{print $2}' | xargs kill -9", $arguments['port']));
+
+    $res = trim(shell_exec(sprintf("ps -ef | grep '\-N \-f \-D %s' | awk '{print $2}' | xargs ", $arguments['port'])));
+    if(!empty($res)){
+        throw new Exception("Unable to delete Transferring, do it manually\n");
+    }else{
+        printf("Deleted transferring successfully\n");
+    }
 }
