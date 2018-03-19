@@ -47,4 +47,43 @@ class IndexController{
         $this->load("default");
     }
 
+    protected function get_method(){
+        return $_SERVER['REQUEST_METHOD'];
+    }
+
+    protected function get_request_headers($key=null){
+        $headers = getallheaders();
+        if(!empty($key)){
+            return $headers[$key];
+        }
+        return $headers;
+    }
+
+    protected function get_response_headers($key=null){
+        $headers = headers_list();
+        $new_headers = [];
+        array_map(function($i)use(&$new_headers){$temp=explode(":", $i);$new_headers[$temp[0]] = $temp[1];}, $headers);
+        if(!empty($key)){
+            return $new_headers[$key];
+        }
+        return $new_headers;
+    }
+
+    protected function set_response_header($key=null, $value=null){
+        if(!empty($key)){
+            header(implode(": ", [$key, $value]));
+            return 1;
+        }
+        return 0;
+    }
+
+    protected function remove_response_header($key=null){
+        if(!empty($key)){
+            header_remove($key);
+            return 1;
+        }
+        return 0;
+    }
+
+
 }

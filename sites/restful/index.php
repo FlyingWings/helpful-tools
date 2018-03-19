@@ -7,15 +7,13 @@
  */
 
 
-define("SITE_ROOT", __DIR__);
-require_once(SITE_ROOT."/../../base.php");
+define("SITE_ROOT", dirname(__FILE__));
 
 
-switch($_SERVER['REQUEST_METHOD']){
-    case "GET":
-        var_dump($_GET);break;
-    case "POST":
-        var_dump($_POST,getallheaders());break;
-    default:
-        throw new Exception("Request Method not allowed");
-}
+global $routers;
+
+$routers['resource/get'] = "RestfulController/get";
+
+
+require_once(SITE_ROOT."/../../framework/index.php");
+
