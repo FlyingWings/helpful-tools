@@ -20,6 +20,24 @@ function load_files($directory){
     return [];
 }
 
+function list_files($directory){
+    if(is_dir($directory)) {
+        $dir = opendir($directory);
+        $sub_file = [];
+        while (($file = readdir($dir)) !== false) {
+            if ($file == "." || $file == "..") continue;
+            if (is_dir($directory . DIRECTORY_SEPARATOR . $file)) {
+                $sub_file[] = list_files($directory . DIRECTORY_SEPARATOR . $file);
+            } else {
+                $sub_file[] = $directory . DIRECTORY_SEPARATOR . $file;
+            }
+        }
+        closedir($dir);
+        return $sub_file;
+    }
+    return [];
+}
+
 
 
 define("ROOT", __DIR__);

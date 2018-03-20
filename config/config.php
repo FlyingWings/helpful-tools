@@ -14,5 +14,6 @@ define("SSH_HOSTS_FILE", "/etc/ssh_hosts.json");
 
 define("FRAME", ROOT. "/framework");
 
+define("DISK_BASE", "/mnt/vdb1/");
 
 define("MVC", FRAME."/mvc");
