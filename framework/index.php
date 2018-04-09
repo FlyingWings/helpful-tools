@@ -49,7 +49,8 @@ function call_controller_method($uri, &$routers){
                 //判断调用的控制器类是否存在
                 if(!empty($obj)){
                     $controller = new $obj();
-                    $controller->$class_func[1]();//调用指定方法
+                    $func = $class_func[1];
+                    call_user_func([$controller, $func]);//调用指定方法, 改用call_user_func的格式
                 }else{
                     throw new Exception("Class Not Defined", 401);
                 }
