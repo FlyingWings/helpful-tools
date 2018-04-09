@@ -52,7 +52,7 @@ function load_functions($argv = [], $cmd=[]){
         "balance"=>"余额相关函数，计算收入等",
         "crawler"=>"爬虫函数，用于抓取/处理数据",
         "general"=>"杂项",
-        "install"=>"初始化函数，用于安装框架相关的函数等",
+        "cron"=>"定时脚本相关",
         "ssh"=>"构造SSH隧道，实现免密登陆等",
         "text"=>"文字处理相关",
         "practise"=>"测试用"
