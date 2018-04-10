@@ -160,3 +160,15 @@ function cli_crawl_get_state_US(){
 }
 
 
+/**
+ * 获取知乎首页信息（在有cookie的基础上）
+ */
+function cli_get_zhihu(){
+
+    $client = new HTTP_client(1, "https://www.zhihu.com");
+    $response = ($client->client->request("GET", "https://www.zhihu.com/", ['cookies'=>$client->cookies])->getBody()->getContents());
+    if(!is_dir(DATA."/log")){
+        mkdir(DATA."/log");
+    }
+    file_put_contents(DATA."/log/zhihu.com", $response);
+}

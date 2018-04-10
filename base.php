@@ -50,6 +50,11 @@ define("COMMANDS", ROOT. DIRECTORY_SEPARATOR. "commands");//实际使用的指�
 
 define("CONFIG", ROOT. DIRECTORY_SEPARATOR. "config");//核心配置
 
+define("DATA", ROOT. DIRECTORY_SEPARATOR. "data");
+
+if(!is_dir(DATA)){
+    mkdir(DATA);
+}
 
 require_once(ROOT. DIRECTORY_SEPARATOR. "vendor". DIRECTORY_SEPARATOR. "autoload.php");//Composer Autoloader
 

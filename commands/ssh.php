@@ -212,7 +212,7 @@ function cli_build_ssh_reverse(){
 
 /**
  * 搭建SSH转发(SOCKS5)
- * 地址|本地端口
+ * 本地端口|地址
  */
 function cli_build_ssh_transfer(){
     $arguments = [
@@ -243,7 +243,7 @@ function cli_build_ssh_transfer(){
 
     try{
         printf("PORT TRANSFERRING FOR %s:%s\n", $arguments['addr'], $arguments['port']);
-        exec(sprintf("ssh -i %s -N -f -D %d %s", $key_file, $arguments['port'], $arguments['addr']));
+        exec(sprintf("ssh -i %s -N -f -D %d %s &", $key_file, $arguments['port'], $arguments['addr']));
     }catch (Exception $e){
         printf("%s\n", $e->getMessage());
     }
