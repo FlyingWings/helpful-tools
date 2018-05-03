@@ -5,6 +5,7 @@
  * Date: 18-3-20
  * Time: 下午3:45
  */
+namespace library;
 class Disk_management{
     public function __construct($user_name){
         $this->user_name = $user_name;

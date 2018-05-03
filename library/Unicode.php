@@ -14,15 +14,6 @@ function unicode_decode($str) {
     return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', 'replace_unicode_escape_sequence', $str);
 }
 
-
-/**
- * TEST UNICODE
- * @param $str
- * @return string
- */
 function unicode_encode($str){
-    return json_encode($str);
+    return trim(json_encode($str), "\"");
 }
-
-
-//See tests

@@ -6,6 +6,7 @@
  * Time: 下午4:46
  */
 
+namespace library;
 class HTTP_client{
     public $client;
     public $cookies;
@@ -53,24 +54,4 @@ class HTTP_client{
         ]);
         return $response;
     }
-
-//    public function crawl_images($url){
-//        $page = $this->client->request("GET", $url);
-//        if($page->getStatusCode() == "200"){
-//            $html = $page->getBody()->getContents();
-////            dd($html);
-//            $regex = "/(?<=src=\")[^\"]+\"(?= title)/";
-//            preg_match_all($regex, $html, $all);
-//            $i=0;
-//            foreach($all[0] as $pic_url){
-////                var_dump("https:".$pic_url);continue;
-//                $page = $this->client->requestAsync("GET", "https:".$pic_url);
-//                $page->
-//                dd($page->getState());
-//                file_put_contents(DATA."/log/image_{$i}.jpg", $page);
-//                $i++;
-//            }
-//
-//        }
-//    }
 }

@@ -6,6 +6,8 @@
  * Time: 上午10:58
  */
 
+
+namespace library;
 class UniqueSet
 {
     protected $set;
@@ -33,5 +35,4 @@ class UniqueSet
         return $this->set;
     }
 
-//    public function __
 }

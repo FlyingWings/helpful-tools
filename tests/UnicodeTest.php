@@ -6,8 +6,13 @@
  * Time: 上午11:07
  */
 
-use PHPUnit\Framework\TestCase;
-include_once "../Unicode.php";
+include_once("../vendor/autoload.php");
+
+use \PHPUnit\Framework\TestCase;
+
+include_once "../library/Unicode.php";
+
+
 
 
 class UnicodeTest extends TestCase

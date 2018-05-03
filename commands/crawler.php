@@ -165,10 +165,119 @@ function cli_crawl_get_state_US(){
  */
 function cli_get_zhihu(){
 
-    $client = new HTTP_client(1, "https://www.zhihu.com");
+    $client = new HTTP_client( "https://www.zhihu.com", true);
     $response = ($client->client->request("GET", "https://www.zhihu.com/", ['cookies'=>$client->cookies])->getBody()->getContents());
     if(!is_dir(DATA."/log")){
         mkdir(DATA."/log");
     }
     file_put_contents(DATA."/log/zhihu.com", $response);
+}
+
+
+function cli_crawl_diyidan(){
+
+    $url = "https://www.diyidan.com/main/post/6294360860179266447/detail/1";
+    $base_url = "https://www.diyidan.com/";
+
+    $client = new HTTP_client($base_url);
+    $client->crawl_images($url);
+
+    dd(1);
+    $params = func_get_args()[0];
+
+    $page = @$params[0]?: 10;
+    $time_gap = 1800;
+    $flag = false;
+    if(time()- filemtime(DATA."/log/diyidan_cos_".($page-1)) > $time_gap){
+        //未过期，处理本地
+        $flag = true;
+    }
+//    dd($flag);
+    $base_url = "https://www.diyidan.com/";
+    if($flag){
+        $site = "main/area/104003/%d";//COS区
+        $client = new HTTP_client($base_url);
+        for($i=1; $i< $page; $i++){
+            $site_to_crawl = sprintf($site, $i);
+            $content = $client->get($site_to_crawl);
+
+            file_put_contents( DATA."/log/diyidan_cos_".$i,$content);
+            usleep(100);
+        }
+    }
+    $crawled = new UniqueSet();
+    for($i=1; $i< $page; $i++){
+        $content = file_get_contents(DATA."/log/diyidan_cos_".$i);
+        $topic_regex = "/main\/post\/\d+\/.+?'/";
+        preg_match_all($topic_regex, $content, $all);
+//        dd($all);
+        foreach($all[0] as $url){
+            $real_url = $base_url.$url;
+            $crawled->add($real_url);
+        }
+    }
+    file_put_contents(DATA."/log/diyidan_result.log", implode("\n", $crawled->getArray()));
+
+//    foreach($)
+
+
+}
+
+
+function cli_get_product_size(){
+
+    $pic_base_url = "https://www.b2sign.com/econo-feather-flag-p-%s.html";
+    $base_url = "https://www.diyidan.com/";
+    $client = new HTTP_client($base_url);
+
+    $item_raw = file_get_contents(DATA."/item_size.txt");
+    $item_raw = explode("\n", $item_raw);
+    $item_size = [];
+    $item_size = array_map(function($i)use(&$item_size){$temp = explode(",", $i);$item_size[$temp[0]] = $item_size[1];  }, $item_size);
+    $input = DATA."/best_2_sellers.txt";
+    @mkdir(DATA."/output");
+
+
+
+    $connections = [];
+    if(file_exists($input)){
+        $m = file_get_contents($input);
+        $m = array_filter(explode("\n", $m));
+        foreach($m as $conn){
+            $item = explode(",", $conn);
+            if(@$item_size[$item[0]]){
+                var_dump(@$item_size[$item[0]]);
+            }elseif(file_exists(DATA."/output/".$item[0]."html")){
+                $size_regex = "/(?<=<h1>)(.+?)(?=<\/h1>)/";
+                $content = file_get_contents(DATA."/output/".$item[0]."html");
+                preg_match($size_regex, $content, $matches);
+                $item_size[$item[0]] = $matches[0];
+
+
+            }else{
+                dd($item_size);
+                $content = $client->get(sprintf($pic_base_url, $item[0]));
+
+                file_put_contents(DATA."/output/".$item[0]."html", $content);
+            }
+
+            if(@$item_size[$item[1]]){
+                var_dump(@$item_size[$item[1]]);
+
+            }elseif(file_exists(DATA."/output/".$item[1]."html")){
+                $size_regex = "/(?<=<h1>)(.+?)(?=<\/h1>)/";
+                $content = file_get_contents(DATA."/output/".$item[1]."html");
+                preg_match($size_regex, $content, $matches);
+                $item_size[$item[1]] = $matches[1];
+
+
+            }else{
+                dd($item_size);
+
+                $content = $client->get(sprintf($pic_base_url, $item[1]));
+                file_put_contents(DATA."/output/".$item[1]."html", $content);
+
+            }
+        }
+    }
 }

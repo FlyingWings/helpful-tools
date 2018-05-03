@@ -68,7 +68,8 @@ function cli_build_ssh_direct(){
         //SCP from remote
         exec(sprintf("scp %s@%s:%s/authorized_keys %s", $arguments["user"], $arguments["addr"], $remote_ssh_dir, $temppath));
         $content = file_get_contents($temppath. "/authorized_keys");
-        $public_key = file_get_contents(ROOT. "/data/ssh/id_rsa_".$arguments["addr"].".pub");
+        $public_key = file_get_contents(
+ROOT. "/data/ssh/id_rsa_".$arguments["addr"].".pub");
 
 
         //SCP back to remote
@@ -99,7 +100,7 @@ function cli_build_ssh_direct(){
 }
 
 /**
- * SSH端口绑定
+ * SSH通道
  * 地址|远程端口|远程用户名
  */
 function cli_build_ssh_reverse(){
@@ -179,6 +180,7 @@ function cli_build_ssh_reverse(){
             $t = explode("\t", $item);
             $map[$t[0]] = ["addr"=>$t[1], "user"=>$t[2]];
         }
+
     }
 
     $judge_flag = sprintf("%d:127.0.0.1:22", $arguments['port']);
@@ -186,7 +188,7 @@ function cli_build_ssh_reverse(){
 
     $shell_status = array_filter(explode("\n", shell_exec(sprintf("ps -ef | grep ssh | grep '%s'", $judge_flag))));
 
-    if((isset($map[$arguments['port']]) && $map[$arguments['port']]['addr'] != gethostname()) || count($shell_status) >2 ){
+    if((isset($map[$arguments['port']]) && $map[$arguments['port']]['addr'] != gethostname()) || count($shell_status) >1 ){
         throw new Exception(sprintf("PORT %d IN USED FOR %s\n", $arguments['port'], implode(":",$map[$arguments['port']])));
     }else{
         $map[$arguments['port']] = ['addr'=>gethostname(), 'user'=>$user];
