@@ -6,11 +6,11 @@
  * Time: 上午11:07
  */
 
-include_once("../vendor/autoload.php");
 
 use \PHPUnit\Framework\TestCase;
 
-include_once "../library/Unicode.php";
+$dir = dirname(__DIR__);
+include_once($dir."/library/Unicode.php");
 
 
 

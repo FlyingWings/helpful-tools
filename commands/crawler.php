@@ -1,6 +1,6 @@
 <?php
 use GuzzleHttp\Client;
-
+use library\HTTP_client;
 
 /**
  * 获取当前汇率
