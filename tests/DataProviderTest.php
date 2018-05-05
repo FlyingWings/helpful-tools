@@ -35,6 +35,8 @@ class DataProviderTest extends TestCase{
     }
 
 
+
+
     /**
      * @expectedException Exception
      */
@@ -42,15 +44,5 @@ class DataProviderTest extends TestCase{
         throw new Exception("123");
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error
-     */
-    public function testError(){
-        include "ffds.php";
-    }
-
-    public function testOutput(){
-        $this->expectOutputString("fff");
-        echo "fff";
-    }
+    
 }

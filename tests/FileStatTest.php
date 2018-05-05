@@ -14,8 +14,12 @@ use PHPUnit\Framework\TestCase;
 class FileStatTest extends TestCase{
     public function testFileLines(){
         $file = DATA."/test1.log";
+
+        if(!file_exists($file)){
+            touch($file);
+        }
         $line = \library\TextRelated\FileStat::getFileLines($file);
-        $this->assertEquals(5, $line);
+        $this->assertNotFalse($line);
     }
 
     public function testFileEmpty(){
@@ -27,6 +31,9 @@ class FileStatTest extends TestCase{
 
     public function testFileNotReadble(){
         $file = DATA."/test.log";
+        if(!file_exists($file)){
+            touch($file);
+        }
         chmod(DATA."/test.log", 000);
         $line = \library\TextRelated\FileStat::getFileLines($file);
         $this->assertFalse($line);
