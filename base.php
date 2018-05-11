@@ -55,6 +55,7 @@ define("DATA", ROOT. DIRECTORY_SEPARATOR. "data");
 if(!is_dir(DATA)){
     mkdir(DATA);
 }
+require_once(ROOT."/secret_config.php");
 
 require_once(ROOT. DIRECTORY_SEPARATOR. "vendor". DIRECTORY_SEPARATOR. "autoload.php");//Composer Autoloader
 
@@ -62,7 +63,6 @@ load_files(AUTOLOAD);
 load_files(LIBRARY);
 load_files(CONFIG);
 
-require_once(ROOT."/secret_config.php");
 
 //dd(sprintf('mysql://%s:%s@%s/%s', DB_USER, DB_PASS, DB_HOST, DB_DEFAULT));
 
