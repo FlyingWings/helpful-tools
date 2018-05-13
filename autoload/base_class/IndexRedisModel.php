@@ -1,6 +1,6 @@
 <?php
 
-namespace autoload\base_class;
+namespace HTools\BaseClass;
 
 class IndexRedisModel{
     protected static $redis;
@@ -9,18 +9,26 @@ class IndexRedisModel{
 
     public $model_name;
     public static function get_instance(){
-        if(empty(self::$redis)){
-            self::$redis = new \Redis();
-            self::$redis->pconnect(REDIS_HOST, REDIS_PORT);
-            return self::$redis;
+
+        static $redis;
+
+        if(empty($redis)){
+            $redis = new \Redis();
+            $redis->pconnect(REDIS_HOST, REDIS_PORT);
+            return $redis;
         }else{
-            return self::$redis;
+            return $redis;
         }
     }
 
-    public function getOne($model_name){
-
+    public function del(){
+        return self::get_instance()->del($this->model_name);
     }
 
-
+    public function type(){
+        return self::get_instance()->type($this->model_name);
+    }
+    public function exists(){
+        return self::get_instance()->exists($this->model_name);
+    }
 }

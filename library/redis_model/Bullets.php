@@ -1,8 +1,10 @@
 <?php
 
-namespace library\redis_model;
+namespace HTools\Library\RedisModel;
 
-use \autoload\base_class\IndexRedisModel;
+use HTools\BaseClass\IndexRedisModel;
+
+
 class Bullets extends IndexRedisModel{
     public $model_name = "bullets";
     public $data_type = "list";
