@@ -5,6 +5,14 @@ namespace HTools\BaseClass;
 class IndexRedisModel{
     protected static $redis;
 
+    protected static $type =[
+        '1'=>"string",
+        '2'=>'set',
+        '3'=>'list',
+        '4'=>'zset',
+        '5'=>'hash'
+    ];
+
     public $data_type;
 
     public $model_name;
@@ -26,9 +34,13 @@ class IndexRedisModel{
     }
 
     public function type(){
-        return self::get_instance()->type($this->model_name);
+        return self::$type[self::get_instance()->type($this->model_name)];
     }
     public function exists(){
         return self::get_instance()->exists($this->model_name);
+    }
+
+    public function multi(){
+        self::get_instance()->multi();
     }
 }

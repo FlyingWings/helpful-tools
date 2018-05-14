@@ -83,7 +83,7 @@ ActiveRecord\Connection::$datetime_format = "Y-m-d H:i:s";
 
 switch (RUN_MODE){
     case "DEV":
-        error_reporting(E_ALL|E_STRICT);
+        error_reporting(E_ALL & ~E_STRICT);
         ini_set("display_errors", 1);break;
     case "TEST":
         error_reporting(E_ALL|E_WARNING);
