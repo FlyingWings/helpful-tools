@@ -6,7 +6,7 @@
  * Time: 下午7:08
  */
 
-namespace Htools\Exception;
+namespace HTools\Exception;
 
 
 class GeneralException extends \Exception{

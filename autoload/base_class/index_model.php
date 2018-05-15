@@ -5,6 +5,7 @@
  * Date: 18-2-8
  * Time: 上午9:57
  */
+namespace HTools\BaseClass;
 
 interface IndexModel{
     public function buildData($data, $callback);

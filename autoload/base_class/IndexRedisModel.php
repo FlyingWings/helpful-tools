@@ -16,6 +16,12 @@ class IndexRedisModel{
     public $data_type;
 
     public $model_name;
+
+
+    public function __construct(){
+        $this->redis = self::get_instance();
+    }
+
     public static function get_instance(){
 
         static $redis;
@@ -41,6 +47,26 @@ class IndexRedisModel{
     }
 
     public function multi(){
-        self::get_instance()->multi();
+        return self::get_instance()->multi();
+    }
+
+    public function exec(){
+        self::get_instance()->exec();
+    }
+
+    public function discard(){
+        self::get_instance()->discard();
+    }
+
+    public function watch($keys=[]){
+        if($keys){
+            self::get_instance()->watch($keys);
+        }else{
+            self::get_instance()->watch($this->model_name);
+        }
+    }
+
+    public function unwatch(){
+        self::get_instance()->unwatch();
     }
 }

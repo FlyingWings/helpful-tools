@@ -86,7 +86,7 @@ switch (RUN_MODE){
         error_reporting(E_ALL & ~E_STRICT);
         ini_set("display_errors", 1);break;
     case "TEST":
-        error_reporting(E_ALL|E_WARNING);
+        error_reporting((E_ALL | E_WARNING) & ~E_NOTICE & ~E_STRICT);
         ini_set("display_errors", 1);break;
     case "ONLINE":
         error_reporting(0);

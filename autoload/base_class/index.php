@@ -5,6 +5,8 @@
  * Date: 18-2-5
  * Time: 下午5:31
  */
+namespace HTools\BaseClass;
+
 class IndexController{
 
     function __construct(){

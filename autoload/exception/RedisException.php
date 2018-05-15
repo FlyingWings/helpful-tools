@@ -5,7 +5,7 @@
  * Date: 18-5-14
  * Time: 下午3:07
  */
-namespace Htools\Exception;
+namespace HTools\Exception;
 
 use Throwable;
 

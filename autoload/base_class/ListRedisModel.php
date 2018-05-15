@@ -11,10 +11,10 @@ class ListRedisModel extends IndexRedisModel{
     public $data_type = "list";
 
     public function __construct(){
-        $this->redis = self::get_instance();
+        parent::__construct();
     }
 
-    public function __call($name, $arguments)
+   public function __call($name, $arguments)
     {
         if(in_array($name, ["rPush", "lPush"])){
             $val = $arguments[0];
@@ -23,24 +23,35 @@ class ListRedisModel extends IndexRedisModel{
             }else{
                 $val = [$this->model_name, $val];
             }
-            $res= call_user_func_array([$this->redis, $name], $val);
-            if($res){
-                return $res;
+            $res= call_user_func_array([$this->redis, $name], $val);//dd($res);
+            if($res && !is_object($res)){
+                return ($res);
+            }elseif($res && is_object($res)){
+                return "Queued";
             }else{
-                throw new \Htools\Exception\RedisException(['model_name'=>$this->model_name, 'type'=>$this->type()]);
+                throw new \HTools\Exception\RedisException(['model_name'=>$this->model_name, 'type'=>$this->type()]);
             }
         }elseif(in_array($name, ['rPop', 'lPop'])){
             $res = $this->redis->$name($this->model_name);
             if($res){
                 return $res;
+            }elseif($res && is_object($res)){
+                return "Queued";
             }else{
                 throw new \Htools\Exception\RedisException(['model_name'=>$this->model_name, 'type'=>$this->type()]);
             }
+        }else{
+            throw new \HTools\Exception\RedisException(sprintf("Method %s illegal\n", $name));
         }
     }
 
     public function len(){
-        return $this->redis->lLen($this->model_name);
+        $res= $this->redis->lLen($this->model_name);
+        if(is_object($res)){
+            return "Queued";
+        }else{
+            return $res;
+        }
     }
 
     public function lTrim($start=0, $end=1){
