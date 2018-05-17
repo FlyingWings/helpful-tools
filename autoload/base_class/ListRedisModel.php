@@ -2,7 +2,7 @@
 
 namespace HTools\BaseClass;
 
-//use HTools\BaseClass\IndexRedisModel;
+use HTools\BaseClass\IndexRedisModel;
 
 
 class ListRedisModel extends IndexRedisModel{
@@ -16,6 +16,7 @@ class ListRedisModel extends IndexRedisModel{
 
    public function __call($name, $arguments)
     {
+        $this->redis = $this->redis_cluster['master'];
         if(in_array($name, ["rPush", "lPush"])){
             $val = $arguments[0];
             if(is_array($val)){
@@ -41,7 +42,8 @@ class ListRedisModel extends IndexRedisModel{
                 throw new \Htools\Exception\RedisException(['model_name'=>$this->model_name, 'type'=>$this->type()]);
             }
         }else{
-            throw new \HTools\Exception\RedisException(sprintf("Method %s illegal\n", $name));
+            $this->redis = $this->redis_cluster['slave'];
+            return call_user_func_array([$this->redis, $name], $arguments);
         }
     }
 

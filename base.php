@@ -55,13 +55,16 @@ define("DATA", ROOT. DIRECTORY_SEPARATOR. "data");
 if(!is_dir(DATA)){
     mkdir(DATA);
 }
-require_once(ROOT."/secret_config.php");
+
+load_files(CONFIG);//首先包含Config目录下的配置项目
+
+require_once(ROOT."/secret_config.php");//根据
+require_once(ROOT."/secret_config.php");//根据
 
 require_once(ROOT. DIRECTORY_SEPARATOR. "vendor". DIRECTORY_SEPARATOR. "autoload.php");//Composer Autoloader
 
 load_files(AUTOLOAD);
 load_files(LIBRARY);
-load_files(CONFIG);
 
 
 //dd(sprintf('mysql://%s:%s@%s/%s', DB_USER, DB_PASS, DB_HOST, DB_DEFAULT));

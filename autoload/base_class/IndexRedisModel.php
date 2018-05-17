@@ -3,8 +3,9 @@
 namespace HTools\BaseClass;
 
 class IndexRedisModel{
-    protected static $redis;
+    public static $redis;
 
+    protected static $redis_cluster;
     protected static $type =[
         '1'=>"string",
         '2'=>'set',
@@ -19,7 +20,13 @@ class IndexRedisModel{
 
 
     public function __construct(){
-        $this->redis = self::get_instance();
+        if(REDIS_RUN_MODE == "SINGLE"){
+            $this->redis = self::get_instance();
+        }else{
+            $this->redis_cluster = self::get_cluster_instance();
+            $this->redis = $this->redis_cluster['master'];
+        }
+
     }
 
     public static function get_instance(){
@@ -34,6 +41,22 @@ class IndexRedisModel{
             return $redis;
         }
     }
+
+    public static function get_cluster_instance(){
+        static $redis_cluster;
+        if(empty($redis_cluster)){
+            global $cluster;
+            $master = new \Redis();
+            $master->pconnect($cluster['master'], REDIS_PORT);
+            $slave = new \Redis();
+            $slave->pconnect($cluster['slaves'][rand(0, count($cluster['slaves'])-1)], REDIS_PORT);
+            $redis_cluster['master'] = $master;
+            $redis_cluster['slave'] = $slave;
+        }
+
+        return $redis_cluster;
+    }
+
 
     public function del(){
         return self::get_instance()->del($this->model_name);

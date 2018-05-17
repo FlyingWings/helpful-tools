@@ -16,3 +16,6 @@ define("FRAME", ROOT. "/framework");
 define("DISK_BASE", "/mnt/vdb1/");
 
 define("MVC", FRAME."/mvc");
+
+
+//define("REDIS_RUN_MODE", "")

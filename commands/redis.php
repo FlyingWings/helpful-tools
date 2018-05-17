@@ -30,16 +30,58 @@ function cli_redis_get_bullets(){
 
 
 function cli_redis_hash(){
-    $test = new Bullets();
-//    $test->exec();
-//    var_dump($test->len());
-//    dd();
-//    $test->watch();
-    $test->multi();
-    sleep(3);
-    var_dump($test->lPush(["123", "456"]));
-    var_dump($test->len());
-    $test->exec();
-    var_dump($test->len());
-//    $test->
+
+    $model = new Bullets();
+    while(1){
+        // Fetch from remote
+    }
+}
+
+function cli_redis_generate_task(){
+    $client = new Bullets("task_queue");
+    $id = 1;
+    while(1){
+        $amount = 100000;
+        $insert_batch = [];
+
+        while($amount){
+            $insert_batch[] = json_encode(['task_id'=>$id++,'class'=>null, 'func'=>'calculate_multi', 'params'=>[rand(1, 65535)]]);
+            $amount--;
+        }
+        $client->rPush($insert_batch);
+        sleep(10);
+    }
+}
+
+function cli_redis_deal_task(){
+
+    $client = new Bullets("task_queue");
+    $res = new Bullets("result_queue");
+    while(1){
+        $task = $client->lPop();
+        if($task){
+            $task = json_decode($task);
+        }
+        if(@$task->class){
+            $res->rPush(json_encode(['task_id'=>$task->task_id, 'result'=>call_user_func_array([$task->class, $task->func], $task->params)]));
+        }else{
+            $res->rPush(json_encode(['task_id'=>$task->task_id, 'result'=>call_user_func_array($task->func, $task->params)]));
+        }
+//        sleep(0.5);
+    }
+
+}
+
+function cli_redis_test(){
+    $res = new Bullets("result_queue");
+    $num = $res->len();
+
+    while(1){
+        $new_num = $res->len();
+        var_dump($new_num- $num);
+        $num = $new_num;
+        sleep(1);
+
+    }
+
 }
