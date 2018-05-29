@@ -8,7 +8,7 @@
 global $routers;
 
 
-$routers['default'] = 'IndexController/index';
+$routers['default'] = 'LoginController/index';
 
 $routers['test'] = 'LoginController/test';
 

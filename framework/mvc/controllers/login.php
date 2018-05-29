@@ -5,12 +5,15 @@
  * Date: 18-2-6
  * Time: 上午11:09
  */
+namespace HTools\MVC\Controllers;
+
+use HTools\BaseClass\IndexController;
 class LoginController extends IndexController{
     function __construct(){
         parent::__construct();
     }
     public function index(){
-        $data = ['title'=>'123', 'content'=>'123', 'id'=>1];
+        $data = ['title'=>'hello world', 'content'=>'welcome to my site', 'id'=>'ryoalex@foxmail.com'];
         $this->load("user/index", $data);
     }
 

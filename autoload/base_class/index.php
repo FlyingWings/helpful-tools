@@ -38,7 +38,7 @@ class IndexController{
         }
 
         if(preg_match_all("/{{\w+}}/", $content, $matches) >0){
-            throw new Exception(sprintf("%s not mapped", implode("|", $matches[0])), 401);
+            throw new \Exception(sprintf("%s not mapped", implode("|", $matches[0])), 401);
         }else{
             echo $content;
         }

@@ -5,6 +5,8 @@
  * Date: 18-2-5
  * Time: 下午4:45
  */
+namespace HTools\MVC;
+use HTools\BaseClass\IndexController;
 
 //加载核心
 require_once(SITE_ROOT."/../../base.php");
@@ -20,8 +22,8 @@ function load_mvc_router(){
         array_shift($name);
         $router_key = implode("/", $name);
         $name = implode("", array_map("ucfirst", $name)). "Controller";
-        $reflect = new ReflectionClass($name);
-        $methods = array_diff($reflect->getMethods(ReflectionMethod::IS_PUBLIC), $reflect->getMethods(ReflectionMethod::IS_PUBLIC|| ReflectionMethod::IS_STATIC));
+        $reflect = new \ReflectionClass($name);
+        $methods = array_diff($reflect->getMethods(\ReflectionMethod::IS_PUBLIC), $reflect->getMethods(\ReflectionMethod::IS_PUBLIC|| \ReflectionMethod::IS_STATIC));
 
         foreach($methods as $method){
             if($method->name != "__construct"){
@@ -45,17 +47,17 @@ function call_controller_method($uri, &$routers){
             $uri = substr($uri, 0,strpos($uri, "?") <=0 ? strlen($uri): strpos($uri, "?"));
             if(in_array($uri, array_keys($routers))){
                 $class_func = $routers[$uri];
-                $obj = class_exists(ucfirst($class_func[0])) ? ucfirst($class_func[0]) : null;
+                $obj = class_exists("HTools\MVC\Controllers\\".ucfirst($class_func[0])) ? "HTools\MVC\Controllers\\".ucfirst($class_func[0]) : null;
                 //判断调用的控制器类是否存在
                 if(!empty($obj)){
                     $controller = new $obj();
                     $func = $class_func[1];
                     call_user_func([$controller, $func]);//调用指定方法, 改用call_user_func的格式
                 }else{
-                    throw new Exception("Class Not Defined", 401);
+                    throw new \Exception("Class Not Defined", 401);
                 }
             }else{
-                throw new Exception("Not Found", 404);
+                throw new \Exception("Not Found", 404);
             }
             break;
         default:
@@ -63,7 +65,7 @@ function call_controller_method($uri, &$routers){
     }
 }
 
-
+global $routers;
 
 
 load_mvc_router();
@@ -71,16 +73,18 @@ load_mvc_router();
 load_files(MVC. DIRECTORY_SEPARATOR. "controllers");
 load_files(FRAME. DIRECTORY_SEPARATOR. "hooks");
 
-
+//dd($routers);
 //路由转意，寻找符合条件的控制器类
 $tranlated_routers = array_map(function($i){
     return explode("/", $i);
 }, $routers);
-
+//dd($tranlated_routers);
 try{
+
+//    dd($tranlated_routers, class_exists("HTools\BaseClass\IndexController"));
     //检查default方法是否存在
-    if(isset($tranlated_routers["default"]) && class_exists(ucfirst($tranlated_routers['default'][0]))){
-        $ref = new ReflectionClass(ucfirst($tranlated_routers['default'][0]));
+    if(isset($tranlated_routers["default"]) && class_exists(ucfirst("HTools\MVC\Controllers\\".$tranlated_routers['default'][0]))){
+        $ref = new \ReflectionClass(ucfirst("HTools\MVC\Controllers\\".$tranlated_routers['default'][0]));//dd($ref);
         $flag= 0;
         foreach($ref->getMethods() as $method){
             if($method->name == $tranlated_routers['default'][1]){
@@ -88,15 +92,19 @@ try{
             }
         }
         if(!$flag){
-            throw new Exception("Default uri not set");
+            throw new \Exception("Default uri not set");
         }
     }else{
-        throw new Exception("Default uri not set");
+        throw new \Exception("Default uri not set");
     }
 
     //Pre Hook 加载（用于URI等过滤）
     load_hook_pre();
+
+//    dd($_SERVER);
+//    if(strpos($_SERVER['REQUEST_URI'], "/index.php"))
     $uri = explode("/", substr($_SERVER['REQUEST_URI'], strlen("/index.php/")));//dd($uri); // /index.php/ ->Length: 11
+//    dd($uri);
     if(empty($uri[0])){
         $uri = ['default'];
     }
@@ -108,7 +116,7 @@ try{
     call_controller_method($uri, $tranlated_routers);
     //Done Hook, 扫尾工作
     load_hook_done();
-}catch (Exception $e){
+}catch (\Exception $e){
     if(RUN_MODE != "ONLINE"){
         print($e->getMessage()."<br>\n");
         $trace = ($e->getTraceAsString());

@@ -23,3 +23,24 @@ function cli_text_get_lines(){
         printf("%s:%d\n", $name, \library\TextRelated\FileStat::getFileLines($name));
     }
 }
+
+
+function cli_filter_skus(){
+    $file = file_get_contents(DATA."/Item.csv");
+
+    $file = explode("\n", $file);
+    array_shift($file);
+    $file = array_filter($file);
+    $file = array_map(function($i){
+        return explode(",", $i);
+    }, $file);
+
+    $skus = [];
+    foreach($file as $content){
+        if($content[1] == "PUBLISHED" ){
+            $skus[]= $content[0];
+        }
+    }
+
+    file_put_contents(DATA."/result.txt", implode("\n", $skus));
+}

@@ -6,6 +6,9 @@
  * Time: 下午5:27
  */
 
+namespace HTools\MVC\Controllers;
+use HTools\BaseClass\IndexController;
+
 class ColumnController extends IndexController{
     public function __construct(){
         parent::__construct();

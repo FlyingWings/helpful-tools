@@ -16,23 +16,27 @@ class ListRedisModel extends IndexRedisModel{
 
    public function __call($name, $arguments)
     {
-        $this->redis = $this->redis_cluster['master'];
+        $this->redis = isset($this->redis_cluster['master']) ?: $this->redis ;
         if(in_array($name, ["rPush", "lPush"])){
-            $val = $arguments[0];
-            if(is_array($val)){
-                array_unshift($val, $this->model_name);
-            }else{
-                $val = [$this->model_name, $val];
-            }
-            $res= call_user_func_array([$this->redis, $name], $val);//dd($res);
+
+            array_unshift($arguments, $this->model_name);
+            $res= call_user_func_array([$this->redis, $name], $arguments);//update the way of pushing data into queue
             if($res && !is_object($res)){
                 return ($res);
             }elseif($res && is_object($res)){
-                return "Queued";
+                return "Queued";// in case of transaction
             }else{
                 throw new \HTools\Exception\RedisException(['model_name'=>$this->model_name, 'type'=>$this->type()]);
             }
-        }elseif(in_array($name, ['rPop', 'lPop'])){
+        } elseif (in_array($name, ['blPop', 'brPop'])){
+            if(empty($arguments)){
+                throw new \HTools\Exception\RedisException("block pop requires timeout");
+            }else{
+                array_unshift($arguments, $this->model_name);
+                $res = call_user_func_array([$this->redis, $name], $arguments);
+                return $res;
+            }
+        } elseif(in_array($name, ['rPop', 'lPop'])){
             $res = $this->redis->$name($this->model_name);
             if($res){
                 return $res;
@@ -41,7 +45,7 @@ class ListRedisModel extends IndexRedisModel{
             }else{
                 throw new \Htools\Exception\RedisException(['model_name'=>$this->model_name, 'type'=>$this->type()]);
             }
-        }else{
+        } else{
             $this->redis = $this->redis_cluster['slave'];
             return call_user_func_array([$this->redis, $name], $arguments);
         }

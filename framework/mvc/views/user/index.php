@@ -5,6 +5,6 @@
 </head>
 <body>
 <p>{{content}}</p>
-<p>{{id}}</p>
+<p><a href="mailto:{{id}}">{{id}}</a></p>
 </body>
 </html>

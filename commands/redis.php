@@ -31,10 +31,9 @@ function cli_redis_get_bullets(){
 
 function cli_redis_hash(){
 
-    $model = new Bullets();
-    while(1){
-        // Fetch from remote
-    }
+    $model = new Bullets("bull");
+    dd($model->redis->blPop("bull",0 ));
+    dd($model->len());
 }
 
 function cli_redis_generate_task(){
@@ -84,4 +83,29 @@ function cli_redis_test(){
 
     }
 
+}
+
+
+class TT{
+    public function  __get($key){
+        return $this->$key;
+    }
+    public function __set($name, $value)
+    {
+        $this->$name= $value;
+    }
+
+    public function uset(){
+        dd($this);
+    }
+
+
+
+}
+
+function cli_redis_usss(){
+    $m = new TT();
+    dd($m->uset());
+    $m->a = 123;
+    dd($m, $m->a);
 }
