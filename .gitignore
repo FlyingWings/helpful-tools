@@ -6,3 +6,4 @@
 /secret_config.php
 .idea/*
 composer.phar
+/commands/*.local.php
