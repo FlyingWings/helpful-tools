@@ -3,7 +3,8 @@
         "guzzlehttp/guzzle": "^6.3",
         "monolog/monolog": "^1.23",
         "php-activerecord/php-activerecord": "^1.2",
-        "phpunit/phpunit": "^4.8"
+        "phpunit/phpunit": "^4.8",
+        "smi2/phpclickhouse": "^1.2"
     },
     "repositories": {
         "packagist": {
