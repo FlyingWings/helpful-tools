@@ -64,6 +64,7 @@ require_once(ROOT."/secret_config.php");//根据
 require_once(ROOT. DIRECTORY_SEPARATOR. "vendor". DIRECTORY_SEPARATOR. "autoload.php");//Composer Autoloader
 
 load_files(AUTOLOAD);
+load_files(LIBRARY."/model");
 load_files(LIBRARY);
 
 
